@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>781</width>
+    <height>331</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>10</y>
-     <width>371</width>
-     <height>31</height>
+     <y>0</y>
+     <width>751</width>
+     <height>61</height>
     </rect>
    </property>
    <property name="font">
@@ -29,6 +29,12 @@
    </property>
    <property name="text">
     <string>Upload Raw Data</string>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="upload_1_btn">
@@ -48,9 +54,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
-     <width>371</width>
-     <height>31</height>
+     <y>60</y>
+     <width>761</width>
+     <height>71</height>
     </rect>
    </property>
    <property name="font">
@@ -60,6 +66,12 @@
    </property>
    <property name="text">
     <string>Upload Termination Report</string>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="upload_2_btn">

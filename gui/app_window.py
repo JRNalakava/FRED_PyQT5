@@ -11,7 +11,7 @@ from gui.date_picker import DatePicker
 from gui.file_upload import FileUpload
 from gui.generate_report import GenerateReport
 from gui.report_download import ReportDownload
-from logic import sample_script
+from logic import sample_script, FRED_script
 
 
 class AppWindow(QtWidgets.QMainWindow):
@@ -83,7 +83,7 @@ class AppWindow(QtWidgets.QMainWindow):
                     self.show_error(self.date_picker_page.error_message)
                     form_is_valid = False
             elif self.stackedWidget.currentIndex() == 3:
-                self.temp_file_path = sample_script.run(self.raw_data_file_path, self.termination_file_path)
+                self.temp_file_path = FRED_script.run(self.raw_data_file_path, self.termination_file_path, self.start_date, self.end_date)
                 self.continue_btn.hide()
                 self.save_page.set_temp_file_path(self.temp_file_path)
             elif self.stackedWidget.currentIndex() == 4:
