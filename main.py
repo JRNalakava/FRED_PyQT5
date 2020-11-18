@@ -3,7 +3,6 @@
 # For more information on GUI and how to use PyQt5 refer to https://build-system.fman.io/docs/
 # Press the green button in the gutter to run the script.
 import sys
-
 from PyQt5 import QtWidgets
 
 from gui.app_window import AppWindow
