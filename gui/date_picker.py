@@ -19,6 +19,7 @@ class DatePicker(QtWidgets.QWidget):
         self.calendar_start.clicked[QtCore.QDate].connect(self.register_date_start)
         self.calendar_end.clicked[QtCore.QDate].connect(self.register_date_end)
 
+
     def register_date_start(self, date):
         self.label_start.setText(date.toString())
         self.start_date = date

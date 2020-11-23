@@ -66,6 +66,7 @@ class AppWindow(QtWidgets.QMainWindow):
         try:
             # Checks where in the process application is at
             if self.stackedWidget.currentIndex() == 1:
+                self.continue_btn.setText('Continue')
                 if self.file_upload_page.validate():
                     self.process_file_upload()
                 else:
@@ -79,12 +80,14 @@ class AppWindow(QtWidgets.QMainWindow):
                                                        file_2_path=self.termination_file_path,
                                                        start_date=self.start_date,
                                                        end_date=self.end_date)
+                    self.continue_btn.setText('Confirm')
                 else:
                     self.show_error(self.date_picker_page.error_message)
                     form_is_valid = False
             elif self.stackedWidget.currentIndex() == 3:
                 self.temp_file_path = FRED_script.run(self.raw_data_file_path, self.termination_file_path, self.start_date, self.end_date)
                 self.continue_btn.hide()
+                self.continue_btn.setText('Continue')
                 self.save_page.set_temp_file_path(self.temp_file_path)
             elif self.stackedWidget.currentIndex() == 4:
                 self.return_btn.hide()

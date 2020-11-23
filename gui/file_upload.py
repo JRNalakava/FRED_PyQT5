@@ -21,6 +21,7 @@ class FileUpload(QtWidgets.QWidget):
         self.upload_1_btn.clicked.connect(self.show_dialog_1)
         self.upload_2_btn.clicked.connect(self.show_dialog_2)
 
+
     # Functions to show File Picker Dialog for File 1 and File 2
     def show_dialog_1(self, file):
 
