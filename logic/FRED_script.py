@@ -1,25 +1,25 @@
 import pandas as pd
 def run(rawDataFilePath, terminatedPatientFilePath, date_start, date_end):
-    
+
     # Creates the two dataframes for each file
     Raw_Data_DF = pd.read_excel(rawDataFilePath)
     Terminated_Patient_DF = pd.read_excel(terminatedPatientFilePath)
-    
+
     #TODO Develop date functionality
     year_needed = date_start.year()
-    
+
     # Calls the filterInactive function that labels each patient as inactive(Terminated) or active
     A_or_I_DataFrame = Add_ActiveOrInactive(Raw_Data_DF, Terminated_Patient_DF)
-    
+
     # Calls the filter_DF function and passes in the raw dataframe with the Active/Inactive column filled out for each patient
     filtered_DataFrames = filter_RawData_DF(A_or_I_DataFrame[0], year_needed, A_or_I_DataFrame[1])
-    
+
     # Calls the function that counts number of times each patient has a therapy session
     # Passes in the two filtered dataframes based on the user's input
     patientAttendanceDicts = countAttendance(filtered_DataFrames[0], filtered_DataFrames[1])
-    
+
     # Calls function that passes in the two dictionaries with the patients names and the number of times they had a therapy session
-    return RangeTotals(patientAttendanceDicts[0], patientAttendanceDicts[1])
+    return RangeTotals(patientAttendanceDicts[0], patientAttendanceDicts[1], patientAttendanceDicts[2])
 
 # Function that combines the first and last names of each patient, and labels each patient as inactive(Terminated) or active
 def Add_ActiveOrInactive(RawData_DF, TermiantedPatient_DF):
@@ -45,12 +45,12 @@ def Add_ActiveOrInactive(RawData_DF, TermiantedPatient_DF):
         else:
             # Fills out the Active/Inactive column as active if the patient's name is not in the list of terminated patients
             RawData_DF.loc[(RawData_DF['Full Name'] == name), 'Active/Inactive'] = 'Active'
-    
+
     return [RawData_DF, Inactive_names]
 
 # Function that filters out all the group therapy patients and non appointment rows in the patient dataframe
 def filter_RawData_DF(RawData_DF, year_needed, TerminatedNames):
-    
+
     TerminatedNames_List = TerminatedNames
 
     # Changes the date column in the dataframe into an easier format to parse
@@ -60,30 +60,56 @@ def filter_RawData_DF(RawData_DF, year_needed, TerminatedNames):
     if year_needed == 0:
 
         # Creates a filtered dataframe that only includes appointments that are therapy sessions or therapy intake
-        Therapy_Sessions_DF = RawData_DF.loc[(RawData_DF['Type'] == 'Appointment') & (RawData_DF['Appointment Type'] == 'Therapy Session') | (RawData_DF['Appointment Type'] == 'Therapy Intake')]
-
+        Therapy_Sessions_DF = RawData_DF[(Therapy_Sessions["Type"] == "Appointment")]
+        Therapy_Sessions_DF = Therapy_Sessions[(Therapy_Sessions["Appointment Type"] == "Therapy Session") | (Therapy_Sessions["Appointment Type"] == "Therapy Intake")]
     else:
-
         # Creates a filtered dataframe that only includes appointments that are therapy sessions or therapy intake from the user's inputted year
-        Therapy_Sessions_DF = RawData_DF.loc[(RawData_DF['Type'] == 'Appointment') & (RawData_DF['Date'].dt.year == year_needed) & (RawData_DF['Appointment Type'] == 'Therapy Session') | (RawData_DF['Appointment Type'] == 'Therapy Intake')]
+        Therapy_Sessions_DF = RawData_DF[(RawData_DF['Date'].dt.year == year_needed)]
+        Therapy_Sessions_DF = Therapy_Sessions_DF[(Therapy_Sessions_DF["Type"] == "Appointment")]
+        Therapy_Sessions_DF = Therapy_Sessions_DF[(Therapy_Sessions_DF["Appointment Type"] == "Therapy Session") | (Therapy_Sessions_DF["Appointment Type"] == "Therapy Intake")]
 
     return [Therapy_Sessions_DF, TerminatedNames_List]
 
 # Function that counts the number of times  each patient has a therapy session
 def countAttendance(TherapySessions_DF, TerminatedNamesList):
 
+    therapy_intake_int = 0
+    therapy_session_int = 0
+    TherapyIntakeTotal_int = 0
+    TherapySessionsTotal_int = 0
+
+    TherapySessionsUnique_DF = TherapySessions_DF.drop_duplicates(subset = ["Full Name"])
     # Creates a dictionary with the key as the name of the patient and the value as the number of times they had a therapy session for all patients
     countPatientTS_Dict = dict(TherapySessions_DF['Full Name'].value_counts())
+
+    for index in range(len(TherapySessions_DF)):
+        if TherapySessions_DF['Appointment Type'].iloc[index] == "Therapy Intake":
+            TherapyIntakeTotal_int += 1
+        else:
+            TherapySessionsTotal_int += 1
+
+    for index in range(len(TherapySessionsUnique_DF)):
+        if TherapySessionsUnique_DF['Appointment Type'].iloc[index] == "Therapy Intake":
+            therapy_intake_int += 1
+        else:
+            therapy_session_int += 1
+
+    TotalClientsInt = therapy_intake_int + therapy_session_int
+
+    sessionsPerClient_int = round((TherapySessionsTotal_int/TotalClientsInt), 2)
+    sessionsPerClient_dict = {'Total Intakes':TherapyIntakeTotal_int, 'Total Clients':TotalClientsInt, 'Total Sessions':TherapySessionsTotal_int, 'Sessions Per Client':sessionsPerClient_int}
 
     countTerminatedTS_Dict = {}
     for key, value in countPatientTS_Dict.items():
         if key in TerminatedNamesList:
             countTerminatedTS_Dict[key] = value
 
-    return [countPatientTS_Dict, countTerminatedTS_Dict]
+    return [countPatientTS_Dict, countTerminatedTS_Dict, sessionsPerClient_dict]
 
 # Function that calculates the number of patients that had a total number of therapy sessions attended within a certain range
-def RangeTotals(countPatientTS, countTerminatedTS):
+def RangeTotals(countPatientTS, countTerminatedTS, sessionsPerClient):
+
+    sessionsPerClientDict = sessionsPerClient
 #--------------------------------------
     # Creates the variables for each range
     ZeroToThree = 0
@@ -150,10 +176,10 @@ def RangeTotals(countPatientTS, countTerminatedTS):
     Range_Total_Percents = {'0-3':ZerotoThreePercent, '4-7':FourtoSevenPercent, '8-10':EighttoTenPercent, '11-14':ElevenToFourteenPercent, '15+':FifteenPlusPercent}
 
     # Calls function that creates the excel sheet and passes in the dictionary of range values and percentages as well as the dictionary with the patient name and the number of therapy sessions attended
-    return create_Excel(countPatientTS, Range_Totals, Range_Total_Percents, countTerminatedTS)
+    return create_Excel(countPatientTS, Range_Totals, Range_Total_Percents, countTerminatedTS, sessionsPerClientDict)
 
 # Function that creates the output excel file that has the retention report
-def create_Excel(countPatientTS_Dict, Range_Totals_Dict, Range_Total_Percents_Dict, countTerminatedTS_Dict):
+def create_Excel(countPatientTS_Dict, Range_Totals_Dict, Range_Total_Percents_Dict, countTerminatedTS_Dict, sessionsPerClient_Dict):
 
     # Creates a list of terminated patient names
     TerminatedPatientNames_List = []
@@ -162,7 +188,8 @@ def create_Excel(countPatientTS_Dict, Range_Totals_Dict, Range_Total_Percents_Di
 
     # Prepares the passed in dictionary to allow for easier creation of the DataFrame
     # Creates a DataFrame from the dictionary that has all the patient names and the total number of sessions they attended
-    prepare_PatientTS_Dict = {i: x for i, x in enumerate(countPatientTS_Dict.items())}
+    alphabetized_dict = dict( sorted(countPatientTS_Dict.items(), key=lambda x: x[0].lower()) )
+    prepare_PatientTS_Dict = {i: x for i, x in enumerate(alphabetized_dict.items())}
     PatientTS_DF = pd.DataFrame.from_dict(prepare_PatientTS_Dict, orient='index', columns=["Patient Name", "Sessions Attended"])
 
     # Prepares the passed in dictionary to allow for easier creation of the DataFrame
@@ -176,6 +203,9 @@ def create_Excel(countPatientTS_Dict, Range_Totals_Dict, Range_Total_Percents_Di
     prepare_RangeTotalPercents_Dict = {i: x for i, x in enumerate(Range_Total_Percents_Dict.items())}
     RangeTotalPercents_DF = pd.DataFrame.from_dict(prepare_RangeTotalPercents_Dict, orient='index', columns=["Ranges", "Percentages"])
 
+    prepare_SessionsPerClient_Dict = {i: x for i, x in enumerate(sessionsPerClient_Dict.items())}
+    SessionsPerClient_DF = pd.DataFrame.from_dict(prepare_SessionsPerClient_Dict, orient='index', columns=['Type', 'Result'])
+
     # Creates a string holding the file name 'Retention Report'
     file_name = 'Retention_Report.xlsx'
 
@@ -184,6 +214,7 @@ def create_Excel(countPatientTS_Dict, Range_Totals_Dict, Range_Total_Percents_Di
     PatientTS_DF.to_excel(writer, sheet_name = 'Retention Report', startcol=0, index=False)
     RangeTotal_DF.to_excel(writer, sheet_name='Retention Report', startcol=4, index=False)
     RangeTotalPercents_DF.to_excel(writer, sheet_name='Retention Report', startcol= 7, index=False)
+    SessionsPerClient_DF.to_excel(writer, sheet_name='Retention Report', startcol= 10, index=False)
 
     #Opens the workbook that was just created called 'Retention Report'
     workbook = writer.book
@@ -238,11 +269,11 @@ def create_Excel(countPatientTS_Dict, Range_Totals_Dict, Range_Total_Percents_Di
         # Figures out what cell to add the color too
         RowNumber = str(index+2)
         ExactCell = 'A'+RowNumber
-        
+
         # If they are termianted then it colors their name red
         if (PatientTS_DF['Patient Name'].iloc[index] in TerminatedPatientNames_List):
             worksheet.conditional_format(ExactCell,{'type': 'no_blanks', 'format': Red_InactivePatient})
-    
+
         # Otherwise it colors their name green to signify they are still active
         else:
             worksheet.conditional_format(ExactCell,{'type': 'no_blanks', 'format': Green_ActivePatient})
