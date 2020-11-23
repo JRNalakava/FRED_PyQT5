@@ -19,8 +19,10 @@ class AppWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         ui_path = os.path.dirname(os.path.abspath(__file__))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(ui_path, "fred.ico")))
         uic.loadUi(os.path.join(ui_path, "app_window.ui"), self)
 
+        self.setWindowTitle('FRED')
         self.termination_file_path = ''
         self.raw_data_file_path = ''
         self.start_date = ''
