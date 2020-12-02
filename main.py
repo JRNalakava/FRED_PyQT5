@@ -7,10 +7,15 @@ from PyQt5 import QtWidgets
 
 from gui.app_window import AppWindow
 
+# Main logic of the application
+# Every PyQT5 application needs an app
+# The AppWindow class holds our main frame
 if __name__ == '__main__':
+    # Instantiates QApplication
     app = QtWidgets.QApplication(sys.argv)
+    # Instantiates AppWindow class and shows it
     window = AppWindow()
     window.show()
+    # Runs application
     app.exec_()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

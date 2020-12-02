@@ -23,15 +23,10 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="title_filea_path">
-      <property name="font">
-       <font>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
+    <item row="3" column="1">
+     <widget class="QLabel" name="label_start_date">
       <property name="text">
-       <string>Raw Data File Path</string>
+       <string/>
       </property>
      </widget>
     </item>
@@ -54,6 +49,18 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="title_filea_path">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Raw Data File Path</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="1">
      <widget class="QLabel" name="label_fileb_path">
       <property name="text">
@@ -69,33 +76,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Start Date</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="title_end_date">
-      <property name="font">
-       <font>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>End Date</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="label_end_date">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLabel" name="label_start_date">
-      <property name="text">
-       <string/>
+       <string>Report Date</string>
       </property>
      </widget>
     </item>

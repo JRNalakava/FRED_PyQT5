@@ -6,74 +6,42 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>781</width>
-    <height>331</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QLabel" name="title_start">
-     <property name="font">
-      <font>
-       <pointsize>14</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Pick starting date for your report</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="title_end">
-     <property name="font">
-      <font>
-       <pointsize>14</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Pick end date for your report</string>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QRadioButton" name="year_radio">
+         <property name="text">
+          <string>Select year</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="alltime_radio">
+         <property name="text">
+          <string>All Time Report</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QCalendarWidget" name="calendar_start">
-     <property name="gridVisible">
-      <bool>false</bool>
-     </property>
-     <property name="verticalHeaderFormat">
-      <enum>QCalendarWidget::NoVerticalHeader</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QCalendarWidget" name="calendar_end">
-     <property name="verticalHeaderFormat">
-      <enum>QCalendarWidget::NoVerticalHeader</enum>
-     </property>
-     <property name="navigationBarVisible">
-      <bool>true</bool>
-     </property>
-     <property name="dateEditEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_start">
-     <property name="text">
-      <string>Selected Date</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="label_end">
-     <property name="text">
-      <string>Selected Date</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="year_layout">
+     <item>
+      <widget class="QSpinBox" name="year_box"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

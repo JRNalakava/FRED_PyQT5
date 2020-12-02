@@ -6,36 +6,47 @@ from gui.generate_report import GenerateReport
 from gui.report_download import ReportDownload
 
 
+# This class describes the Date Picker widget
+# Here, the user is able to pick a specific year or choose for an all time report
+# This widget contains validation and dialogs
 class DatePicker(QtWidgets.QWidget):
+
+    # init function for DatePicker
+    # Adds the main UI from QtCreator
+    # Sets up variables and calendar functionality
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         ui_path = os.path.dirname(os.path.abspath(__file__))
         uic.loadUi(os.path.join(ui_path, "date_picker_widget.ui"), self)
         self.file_1_path = None
         self.file_2_path = None
-        self.start_date = None
-        self.end_date = None
+        self.start_date = -1
+        self.end_date = -1
         self.error_message = ''
-        self.calendar_start.clicked[QtCore.QDate].connect(self.register_date_start)
-        self.calendar_end.clicked[QtCore.QDate].connect(self.register_date_end)
+        self.all_time = False
+        self.year_radio.clicked.connect(self.year_report_radio)
+        self.alltime_radio.clicked.connect(self.all_time_report)
+        self.year_box.hide()
+        # setting range
+        self.year_box.setRange(-1, 3000)
+        # setting value
+        self.year_box.setValue(2020)
 
+    # Function to handle all time selection radio button
+    def all_time_report(self):
+        self.all_time = True
+        self.year_box.setValue(-1)
+        self.year_box.hide()
 
-    def register_date_start(self, date):
-        self.label_start.setText(date.toString())
-        self.start_date = date
+    # Function to handle year selection radio button
+    def year_report_radio(self):
+        self.year_box.show()
+        self.year_box.setValue(2020)
+        self.all_time = False
 
-    def register_date_end(self, date):
-        self.label_end.setText(date.toString())
-        self.end_date = date
-
+    # Function to validate user info
     def validate(self):
-        if self.start_date is None:
+        if self.year_box.value() == -1 and not self.all_time:
             self.error_message = 'Start date is empty.'
-            return False
-        if self.end_date is None:
-            self.error_message = 'End date is empty.'
-            return False
-        if self.start_date > self.end_date:
-            self.error_message = 'End date must be after start date.'
             return False
         return True

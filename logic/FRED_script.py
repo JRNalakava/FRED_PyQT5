@@ -1,12 +1,12 @@
 import pandas as pd
-def run(rawDataFilePath, terminatedPatientFilePath, date_start, date_end):
+def run(rawDataFilePath, terminatedPatientFilePath, date_start):
 
     # Creates the two dataframes for each file
     Raw_Data_DF = pd.read_excel(rawDataFilePath)
     Terminated_Patient_DF = pd.read_excel(terminatedPatientFilePath)
 
     #TODO Develop date functionality
-    year_needed = date_start.year()
+    year_needed = date_start
 
     # Calls the filterInactive function that labels each patient as inactive(Terminated) or active
     A_or_I_DataFrame = Add_ActiveOrInactive(Raw_Data_DF, Terminated_Patient_DF)
@@ -60,8 +60,8 @@ def filter_RawData_DF(RawData_DF, year_needed, TerminatedNames):
     if year_needed == 0:
 
         # Creates a filtered dataframe that only includes appointments that are therapy sessions or therapy intake
-        Therapy_Sessions_DF = RawData_DF[(Therapy_Sessions["Type"] == "Appointment")]
-        Therapy_Sessions_DF = Therapy_Sessions[(Therapy_Sessions["Appointment Type"] == "Therapy Session") | (Therapy_Sessions["Appointment Type"] == "Therapy Intake")]
+        Therapy_Sessions_DF = RawData_DF[(RawData_DF["Type"] == "Appointment")]
+        Therapy_Sessions_DF = Therapy_Sessions_DF[(Therapy_Sessions_DF["Appointment Type"] == "Therapy Session") | (Therapy_Sessions_DF["Appointment Type"] == "Therapy Intake")]
     else:
         # Creates a filtered dataframe that only includes appointments that are therapy sessions or therapy intake from the user's inputted year
         Therapy_Sessions_DF = RawData_DF[(RawData_DF['Date'].dt.year == year_needed)]
