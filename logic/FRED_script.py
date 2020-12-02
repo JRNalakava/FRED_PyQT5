@@ -96,8 +96,10 @@ def countAttendance(TherapySessions_DF, TerminatedNamesList):
 
     TotalClientsInt = therapy_intake_int + therapy_session_int
 
-    sessionsPerClient_int = round((TherapySessionsTotal_int/TotalClientsInt), 2)
-    sessionsPerClient_dict = {'Total Intakes':TherapyIntakeTotal_int, 'Total Clients':TotalClientsInt, 'Total Sessions':TherapySessionsTotal_int, 'Sessions Per Client':sessionsPerClient_int}
+    TotalSessions_int = TherapyIntakeTotal_int + TherapySessionsTotal_int
+
+    sessionsPerClient_int = round((TotalSessions_int/TotalClientsInt), 2)
+    sessionsPerClient_dict = {'Total Intakes':TherapyIntakeTotal_int, 'Total Clients':TotalClientsInt, 'Total Sessions':TotalSessions_int, 'Sessions Per Client':sessionsPerClient_int}
 
     countTerminatedTS_Dict = {}
     for key, value in countPatientTS_Dict.items():
