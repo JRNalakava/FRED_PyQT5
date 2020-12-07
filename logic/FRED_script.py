@@ -18,7 +18,7 @@ def run(rawDataFilePath, terminatedPatientFilePath, date_start):
     # Passes in the two filtered dataframes based on the user's input
     patientAttendanceDicts = countAttendance(filtered_DataFrames[0], filtered_DataFrames[1])
 
-    # Calls function that passes in the two dictionaries with the patients names and the number of times they had a therapy session
+    # Calls function that passes in the three dictionaries with the patients names and the number of times they had a therapy session and the sessions per client totals
     return RangeTotals(patientAttendanceDicts[0], patientAttendanceDicts[1], patientAttendanceDicts[2])
 
 # Function that combines the first and last names of each patient, and labels each patient as inactive(Terminated) or active
@@ -73,39 +73,55 @@ def filter_RawData_DF(RawData_DF, year_needed, TerminatedNames):
 # Function that counts the number of times  each patient has a therapy session
 def countAttendance(TherapySessions_DF, TerminatedNamesList):
 
+    # Sets the varaibles for the total clients section of the retention report
     therapy_intake_int = 0
     therapy_session_int = 0
+
+    # Sets variables for the totals column of the retention report
     TherapyIntakeTotal_int = 0
     TherapySessionsTotal_int = 0
 
+    # Creates a dataframe of the raw data that removes all duplicates and only allows one data row per client
     TherapySessionsUnique_DF = TherapySessions_DF.drop_duplicates(subset = ["Full Name"])
+
     # Creates a dictionary with the key as the name of the patient and the value as the number of times they had a therapy session for all patients
     countPatientTS_Dict = dict(TherapySessions_DF['Full Name'].value_counts())
 
+    # for loop that loops through the filtered raw data dataframe
     for index in range(len(TherapySessions_DF)):
+        # If the row is a therapy intake then it adds one to the total variable
         if TherapySessions_DF['Appointment Type'].iloc[index] == "Therapy Intake":
             TherapyIntakeTotal_int += 1
+        # else the row is a therapy session so it adds one to the total variable
         else:
             TherapySessionsTotal_int += 1
 
+    # loops through the filtred dataframe without duplicates and adds each row to either the total therapy intake or sessoin variable
     for index in range(len(TherapySessionsUnique_DF)):
         if TherapySessionsUnique_DF['Appointment Type'].iloc[index] == "Therapy Intake":
             therapy_intake_int += 1
         else:
             therapy_session_int += 1
 
+    # Int variable created that adds the two total variables from the non-duplicates dataframe to get the total clients
     TotalClientsInt = therapy_intake_int + therapy_session_int
 
+    # Int variable created that adds the two total variables from the filtered dataframe to get the total number of sessions for the retention report
     TotalSessions_int = TherapyIntakeTotal_int + TherapySessionsTotal_int
 
+    # Int variable created that divides the total number of sessions by the total number of clients and rounds answer to two to get sessions per client
     sessionsPerClient_int = round((TotalSessions_int/TotalClientsInt), 2)
+
+    #Creates a dictionary with all the newly created variables to pass them to the create excel function that adds them to the retention report
     sessionsPerClient_dict = {'Total Intakes':TherapyIntakeTotal_int, 'Total Clients':TotalClientsInt, 'Total Sessions':TotalSessions_int, 'Sessions Per Client':sessionsPerClient_int}
 
+    # Creates a dicitonary that is populated with the terminated patients names by looping through the dictionary with the names and session totals for each patient
     countTerminatedTS_Dict = {}
     for key, value in countPatientTS_Dict.items():
         if key in TerminatedNamesList:
             countTerminatedTS_Dict[key] = value
 
+    # Returns a list of the patient totals, terminated patient totals, and the sessions per client total dictionaries
     return [countPatientTS_Dict, countTerminatedTS_Dict, sessionsPerClient_dict]
 
 # Function that calculates the number of patients that had a total number of therapy sessions attended within a certain range
@@ -205,6 +221,8 @@ def create_Excel(countPatientTS_Dict, Range_Totals_Dict, Range_Total_Percents_Di
     prepare_RangeTotalPercents_Dict = {i: x for i, x in enumerate(Range_Total_Percents_Dict.items())}
     RangeTotalPercents_DF = pd.DataFrame.from_dict(prepare_RangeTotalPercents_Dict, orient='index', columns=["Ranges", "Percentages"])
 
+    # Prepares the passed in dictionary to allow for easier creation of the DataFrame
+    # Creates a dataframe from the dictionary that has all the total clients, total intakes, total sessions, and sessions per client totals
     prepare_SessionsPerClient_Dict = {i: x for i, x in enumerate(sessionsPerClient_Dict.items())}
     SessionsPerClient_DF = pd.DataFrame.from_dict(prepare_SessionsPerClient_Dict, orient='index', columns=['Type', 'Result'])
 
