@@ -6,6 +6,7 @@ from math import e
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMessageBox
+from xlsxwriter.exceptions import FileCreateError
 
 from gui.date_picker import DatePicker
 from gui.file_upload import FileUpload
@@ -146,8 +147,15 @@ class AppWindow(QtWidgets.QMainWindow):
                     self.continue_btn.setText('Continue')
                     # Injects file path into ReportDownload Widget
                     self.save_page.set_temp_file_path(self.temp_file_path)
-                except:
-                    self.show_error('Cannot have open Excel.')
+                except KeyError:
+                    self.show_error('There was an error processing the files.'
+                                    ' Please make sure that they are in the correct format.')
+                    form_is_valid = False
+                except FileCreateError:
+                    self.show_error('There was an error creating the report.'
+                                    ' Please make sure that no reports are open.')
+                    form_is_valid = False
+
             elif self.stackedWidget.currentIndex() == 4:
                 # Means that user is at ReportDownload Widget
                 self.return_btn.hide()

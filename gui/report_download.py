@@ -45,7 +45,6 @@ class ReportDownload(QtWidgets.QWidget):
     # Function opens excel file
     def open_file(self):
         # Checks whether user is running mac or Windows
-        # TODO: Add linux
         # If user is on windows
         if platform.system() == 'Windows':
             try:

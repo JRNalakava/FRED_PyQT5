@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 
 from gui.date_picker import DatePicker
 
+
 # This class describes the File Upload widget
 # Here, the user is able to enter two different filepaths
 # This widget contains validation and dialogs
@@ -31,15 +32,14 @@ class FileUpload(QtWidgets.QWidget):
         self.upload_1_btn.clicked.connect(self.show_dialog_1)
         self.upload_2_btn.clicked.connect(self.show_dialog_2)
 
-
     # Functions to show File Picker Dialog for File 1 and File 2
     # Shows dialog for raw data report
     def show_dialog_1(self, file):
-
         home_dir = str(Path.home())
         fname = QFileDialog.getOpenFileName(self, 'Open file', home_dir)[0]
         self.label_1.setText(fname)
         self.file_1_path = fname
+
     # Shows dialog for termination report
     def show_dialog_2(self, file):
         home_dir = str(Path.home())
@@ -56,11 +56,11 @@ class FileUpload(QtWidgets.QWidget):
             self.error_message = 'Termination Report Filepath is empty.'
             return False
         if self.file_1_path.split('.')[-1] not in ('xlsx', 'xls'):
-            self.error_message = 'Raw Data File Extension {} is not supported.'.\
+            self.error_message = 'Raw Data File Extension {} is not supported.'. \
                 format(self.file_1_path.split('.')[-1])
             return False
         if self.file_2_path.split('.')[-1] not in ('xlsx', 'xls'):
-            self.error_message = 'Termination Report File Extension ({}) is not supported.'.\
+            self.error_message = 'Termination Report File Extension ({}) is not supported.'. \
                 format(self.file_2_path.split('.')[-1])
             return False
         return True
