@@ -150,7 +150,12 @@ def RangeTotals(countPatientTS, countTerminatedTS, sessionsPerClient):
         elif value >= 11 and value <=14:
             ElevenToFourteen += 1
         else:
+            continue
+
+    for value in countPatientTS.values():
+        if value >= 15:
             FifteenPlus += 1
+            
 #-------------------------------------------------------------
     # All the if statements check if the range variable is not zero to make sure there is no division by zero
     if ZeroToThree != 0:
